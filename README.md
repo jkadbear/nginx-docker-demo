@@ -16,7 +16,7 @@ docker run -d --name nginx-proxy --rm -p 80:80 \
 
 ### Static file service
 
-```
+```bash
 docker run -d --name download --rm \
     -v $PWD/nginx.conf:/etc/nginx/nginx.conf \
     -v $PWD/download:/usr/share/nginx/html \
@@ -25,30 +25,42 @@ docker run -d --name download --rm \
 
 open `http://download.lpwan-thu.top`
 
-### Web App
+### Nodejs App
 
+```bash
+cd nodeapp
+docker build -t jkadbear/jura
+docker run -d --name nodeapp --rm \
+    -e VIRTUAL_HOST=nodeapp.lpwan-thu.top jkadbear/nodeapp
 ```
-cd app
+
+open `http://nodeapp.lpwan-thu.top`
+
+### SpringBoot App
+
+```bash
+cd SimpleSpringBoot
+mvn clean package -DskipTests
 docker build -t jkadbear/jura
 docker run -d --name jura --rm \
-    -e 'VIRTUAL_HOST=jura.lpwan-thu.top' jkadbear/jura
+    -e VIRTUAL_HOST=jura.lpwan-thu.top jkadbear/jura
 ```
 
 open `http://jura.lpwan-thu.top`
 
-### Ip Report
+### IP Report
 
-```
+```bash
 cd ip-reporter
 docker build -t jkadbear/ip-reporter
-docker run -d --name ip --rm -p 7777:5000 jkadbear/ip-reporter
+docker run -d --name ip --rm -p PORT:5000 jkadbear/ip-reporter
 ```
 
-open `http://lpwan-thu.top:7777/ip`
+open `http://lpwan-thu.top:PORT/ip`
 
 ### SSH proxy
 
-```
+```bash
 docker run -d --name nginx-ssh --rm -p ANOTHERPORT:ANOTHERPORT:
     -v $PWD/nginx-ssh.conf:/etc/nginx/nginx.conf nginx
 ```
