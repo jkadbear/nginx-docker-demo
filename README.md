@@ -23,7 +23,7 @@ docker run -d --name download --rm \
     -e VIRTUAL_HOST=download.lpwan-thu.top nginx
 ```
 
-open `download.lpwan-thu.top`
+open `http://download.lpwan-thu.top`
 
 ### Web App
 
@@ -34,4 +34,22 @@ docker run -d --name jura --rm \
     -e 'VIRTUAL_HOST=jura.lpwan-thu.top' jkadbear/jura
 ```
 
-open `jura.lpwan-thu.top`
+open `http://jura.lpwan-thu.top`
+
+### Ip Report
+
+```
+cd ip-reporter
+docker build -t jkadbear/ip-reporter
+docker run -d --name ip --rm -p 7777:5000 jkadbear/ip-reporter
+```
+
+open `http://lpwan-thu.top:7777/ip`
+
+### SSH proxy
+
+```
+docker run -d --name nginx-ssh --rm -p ANOTHERPORT:ANOTHERPORT:
+    -v $PWD/nginx-ssh.conf:/etc/nginx/nginx.conf nginx
+```
+
