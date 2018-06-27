@@ -29,7 +29,7 @@ open `http://download.lpwan-thu.top`
 
 ```bash
 cd nodeapp
-docker build -t jkadbear/jura
+docker build -t jkadbear/jura .
 docker run -d --name nodeapp --rm \
     -e VIRTUAL_HOST=nodeapp.lpwan-thu.top jkadbear/nodeapp
 ```
@@ -40,8 +40,8 @@ open `http://nodeapp.lpwan-thu.top`
 
 ```bash
 cd SimpleSpringBoot
-mvn clean package -DskipTests
-docker build -t jkadbear/jura
+./mvnw clean package -DskipTests
+docker build -t jkadbear/jura .
 docker run -d --name jura --rm \
     -e VIRTUAL_HOST=jura.lpwan-thu.top jkadbear/jura
 ```
@@ -52,7 +52,7 @@ open `http://jura.lpwan-thu.top`
 
 ```bash
 cd ip-reporter
-docker build -t jkadbear/ip-reporter
+docker build -t jkadbear/ip-reporter .
 docker run -d --name ip --rm -p PORT:5000 jkadbear/ip-reporter
 ```
 
