@@ -4,37 +4,78 @@ This demo shows how to use dockerized ` Nginx`.
 
 - Auto indexer (with custom [nginx-indexer](https://github.com/nervo/nginx-indexer))
 - Reverse proxy for web app
-- [HTTPS with Let's Encrypt ](https://cloud.google.com/community/tutorials/nginx-reverse-proxy-docker)
+- Docker Registry
 
-### Nginx proxy
+Before staring these services, run `export DOMAIN=xxx` to set  your base domain, or create `.env` file under relevant directory. For `ssh-proxy`, `SSHPORT` should be set. For `ip-report`, `REPORTPORT` should be set.
 
-```bash
-docker run -d --name nginx-proxy --rm -p 80:80 \
-    -v /var/run/docker.sock:/tmp/docker.sock:ro \
-    jwilder/nginx-proxy
-```
+In order to proxy the nginx-proxy container and the web app container must be on the same Docker network.
 
-### Static file service
+When you run a multi-container web app with `docker-compose`, Docker attaches the containers to a default network. The default network is different from the bridge network that containers run with the docker run command attach to.
+
+To resolve this, create a new Docker network.
 
 ```bash
-docker run -d --name download --rm \
-    -v $PWD/nginx.conf:/etc/nginx/nginx.conf \
-    -v $PWD/download:/usr/share/nginx/html \
-    -e VIRTUAL_HOST=download.lpwan-thu.top nginx
+docker network create --driver bridge proxy-network
 ```
 
-open `http://download.lpwan-thu.top`
+
+### Nginx Proxy with Simpole Static file service
+
+```bash
+cd nginx-proxy
+docker-compose up -d
+```
+
+open `http://download.$DOMAIN`
+
+### Docker Registry
+
+1. create certificate and set HTTPS
+
+   https://docs.docker.com/registry/insecure/#use-self-signed-certificates
+
+   ```bash
+   openssl req \
+     -newkey rsa:4096 -nodes -sha256 -keyout certs/hub.$DOMAIN.key \
+     -x509 -days 365 -out certs/hub.$DOMAIN.crt
+   ```
+
+   https://docs.docker.com/docker-for-mac/#add-tls-certificates
+
+   e.g. for Mac users:
+
+   ```bash
+   security add-trusted-cert -d -r trustRoot -k ~/Library/Keychains/login.keychain ca.crt
+   ```
+
+   **NOTE**: You need to restart Docker for Mac after making any changes to the keychain or to the ~/.docker/certs.d directory in order for the changes to take effect.
+
+2. apply access control
+
+   ```bash
+   cd docker-registry
+   mkdir auth
+   docker run --rm \
+   --entrypoint htpasswd \
+   registry:2 -Bbn testuser testpasswd > auth/htpasswd
+   ```
+
+3. run
+
+   ```bash
+   docker-compose up -d
+   ```
+
+try `docker login hub.$DOMAIN`
 
 ### Nodejs App
 
 ```bash
 cd nodeapp
-docker build -t jkadbear/jura .
-docker run -d --name nodeapp --rm \
-    -e VIRTUAL_HOST=nodeapp.lpwan-thu.top jkadbear/nodeapp
+docker-compose up -d
 ```
 
-open `http://nodeapp.lpwan-thu.top`
+open `http://nodeapp.$DOMAIN`
 
 ### SpringBoot App
 
@@ -43,25 +84,25 @@ cd SimpleSpringBoot
 ./mvnw clean package -DskipTests
 docker build -t jkadbear/jura .
 docker run -d --name jura --rm \
-    -e VIRTUAL_HOST=jura.lpwan-thu.top jkadbear/jura
+    -e VIRTUAL_HOST=jura.$DOMAIN jkadbear/jura
 ```
 
-open `http://jura.lpwan-thu.top`
+open `http://jura.DOMAIN`
 
 ### IP Report
 
 ```bash
-cd ip-reporter
-docker build -t jkadbear/ip-reporter .
-docker run -d --name ip --rm -p PORT:5000 jkadbear/ip-reporter
+cd ip-report
+docker-compose up -d
 ```
 
-open `http://lpwan-thu.top:PORT/ip`
+open `http://$DOMAIN:$REPORTPORT/ip`
 
 ### SSH proxy
 
 ```bash
-docker run -d --name nginx-ssh --rm -p ANOTHERPORT:ANOTHERPORT:
-    -v $PWD/nginx-ssh.conf:/etc/nginx/nginx.conf nginx
+cd ssh-proxy
+docker-compose up -d
 ```
 
+try `ssh -p $SSHPORT USER@$DOMAIN`
