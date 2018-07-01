@@ -65,3 +65,10 @@ docker run -d --name nginx-ssh --rm -p ANOTHERPORT:ANOTHERPORT:
     -v $PWD/nginx-ssh.conf:/etc/nginx/nginx.conf nginx
 ```
 
+### Private Docker Repo
+
+```bash
+docker run -d --name hub --rm \
+    -e VIRTUAL_HOST=hub.lpwan-thu.top registry
+```
+
