@@ -207,3 +207,6 @@ venv.bak/
 # MACOSX
 .DS_Store
 *.DS_Store
+
+docker-registry/auth/
+*.swp
