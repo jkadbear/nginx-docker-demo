@@ -7,7 +7,7 @@ services:
     networks:
       - proxy-network
     ports:
-      - ${DOMAIN}:${SSHPORT}
+      - ${SSHPORT}:${SSHPORT}
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
 

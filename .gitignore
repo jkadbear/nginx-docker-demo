@@ -209,4 +209,5 @@ venv.bak/
 *.DS_Store
 
 docker-registry/auth/
+ssh-proxy/nginx.conf
 *.swp

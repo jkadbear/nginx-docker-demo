@@ -102,6 +102,7 @@ open `http://$DOMAIN:$REPORTPORT/ip`
 
 ```bash
 cd ssh-proxy
+cp nginx.conf.example nginx.conf # edit IP and SSHPORT
 docker-compose up -d
 ```
 

@@ -12,10 +12,10 @@ events {
 
 stream {
 	upstream ssh {
-		server ${SSHIP}:22;
+		server IP:22;
 	}
 	server {
-		listen        ${SSHPORT};
+		listen        SSHPORT;
 		proxy_pass    ssh;
 	}
 }
