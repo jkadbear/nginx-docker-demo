@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name:nodeapp
+    container_name: nodeapp
     networks:
       - proxy-network
     environment:
